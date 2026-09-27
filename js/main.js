@@ -48,27 +48,34 @@
     return /\.(mp4|webm|mov)$/i.test(url || "");
   }
   function isEmbeddable(url) {
-    return /youtube\.com|youtu\.be|vimeo\.com/i.test(url || "");
+    return /youtube\.com|youtu\.be|vimeo\.com|instagram\.com|facebook\.com|fb\.watch/i.test(url || "");
   }
   function embedUrl(url) {
-  if (/youtu\.be\//.test(url)) {
-    const id = url.split("youtu.be/")[1].split(/[?&]/)[0];
-    return `https://www.youtube.com/embed/${id}`;
+    if (/youtu\.be\//.test(url)) {
+      const id = url.split("youtu.be/")[1].split(/[?&]/)[0];
+      return `https://www.youtube.com/embed/${id}`;
+    }
+    if (/youtube\.com\/watch/.test(url)) {
+      const id = new URL(url).searchParams.get("v");
+      return `https://www.youtube.com/embed/${id}`;
+    }
+    if (/youtube\.com\/shorts\//.test(url)) {
+      const id = url.split("youtube.com/shorts/")[1].split(/[?&]/)[0];
+      return `https://www.youtube.com/embed/${id}`;
+    }
+    if (/vimeo\.com\//.test(url)) {
+      const id = url.split("vimeo.com/")[1].split(/[?&]/)[0];
+      return `https://player.vimeo.com/video/${id}`;
+    }
+    if (/instagram\.com\/(reel|p|tv)\//.test(url)) {
+      const clean = url.split(/[?#]/)[0].replace(/\/$/, "");
+      return `${clean}/embed`;
+    }
+    if (/facebook\.com\/.*\/videos\//.test(url) || /fb\.watch\//.test(url)) {
+      return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0`;
+    }
+    return url;
   }
-  if (/youtube\.com\/watch/.test(url)) {
-    const id = new URL(url).searchParams.get("v");
-    return `https://www.youtube.com/embed/${id}`;
-  }
-  if (/youtube\.com\/shorts\//.test(url)) {
-    const id = url.split("youtube.com/shorts/")[1].split(/[?&]/)[0];
-    return `https://www.youtube.com/embed/${id}`;
-  }
-  if (/vimeo\.com\//.test(url)) {
-    const id = url.split("vimeo.com/")[1].split(/[?&]/)[0];
-    return `https://player.vimeo.com/video/${id}`;
-  }
-  return url;
-}
 
   function lazyImg(src, alt, cls) {
     return `<img data-lazy="${esc(src)}" alt="${esc(alt || "")}" class="skeleton ${cls || ""}" loading="lazy">`;
@@ -175,15 +182,21 @@
   }
 
   function renderPortfolio(d) {
-    const cards = (d.projects || []).map((p) => `
+    const cards = (d.projects || []).map((p, pi) => {
+      const vids = (p.videos || []).filter((v) => v && v.videoUrl);
+      const videoBadge = vids.length
+        ? `<div class="play-badge" data-project-video="${pi}"><span>&#9658;</span></div>`
+        : "";
+      return `
       <div class="card lazy-fade">
-        <div class="card-media">${lazyImg(p.coverImage, p.title)}</div>
+        <div class="card-media">${lazyImg(p.coverImage, p.title)}${videoBadge}</div>
         <div class="card-body">
           <h3>${esc(p.title)}</h3>
           <div class="card-meta">${esc(p.role)}${p.year ? " · " + esc(p.year) : ""}</div>
           <p>${esc(p.description)}</p>
         </div>
-      </div>`).join("");
+      </div>`;
+    }).join("");
     return `
     <section id="portfolio">
       <div class="container">
@@ -338,6 +351,19 @@
       card.addEventListener("click", () => {
         const src = card.dataset.videoSrc;
         if (!src) return;
+        isEmbeddable(src) ? openEmbed(src) : openLightboxVideo(src);
+      });
+    });
+
+    // Portfolio project video badge clicks
+    $app.querySelectorAll("[data-project-video]").forEach((badge) => {
+      badge.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const pi = Number(badge.dataset.projectVideo);
+        const project = (content.portfolio.projects || [])[pi];
+        const vids = project ? (project.videos || []).filter((v) => v && v.videoUrl) : [];
+        if (!vids.length) return;
+        const src = vids[0].videoUrl;
         isEmbeddable(src) ? openEmbed(src) : openLightboxVideo(src);
       });
     });
