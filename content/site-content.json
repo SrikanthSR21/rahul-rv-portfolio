@@ -87,6 +87,17 @@
         "coverImage": "media/images/PLACEHOLDER-project1-cover.jpg",
         "images": [],
         "videos": []
+      },
+      {
+        "id": "project-1790518002685",
+        "title": "Portfolio 2",
+        "role": "Character Role",
+        "year": "2025",
+        "description": "PLACEHOLDER Role",
+        "credits": "Director, production house, etc.",
+        "coverImage": "https://www.youtube.com/watch?v=AnlSgkx1YQY&list=RDq_llhP8AIjc&index=3",
+        "images": [],
+        "videos": []
       }
     ]
   },
