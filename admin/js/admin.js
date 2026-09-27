@@ -170,7 +170,7 @@
     const id = "u_" + Math.random().toString(36).slice(2);
     wrap.innerHTML = `
       <label>${label}</label>
-      ${value ? `<img class="media-preview" src="../${value}" onerror="this.style.display='none'">` : ""}
+      ${value ? `<img class="media-preview" src="${/^https?:\/\//.test(value) ? value : "../" + value}" onerror="this.style.display='none'">` : ""}
       <div class="media-uploader" id="${id}">Click to upload ${kind === "video" ? "video" : "image"} (or paste an external URL below)</div>
       <input type="file" accept="${kind === "video" ? "video/*" : "image/*"}" style="display:none" id="${id}_file">
       <div class="upload-progress" id="${id}_status"></div>
@@ -210,15 +210,14 @@
   }
 
   async function uploadFile(file, kind) {
-    const MAX_MB = kind === "video" ? 3 : 4;
+    if (kind === "video") return uploadVideoToBlob(file);
+
+    const MAX_MB = 4;
     if (file.size > MAX_MB * 1024 * 1024) {
-      const suggestion = kind === "video"
-        ? "Use an external link instead (paste a YouTube, Vimeo, Instagram or Facebook video URL below) — direct video upload only works for very small clips."
-        : "Try a smaller/compressed image, or paste an external image URL below.";
-      throw new Error(`File exceeds ${MAX_MB}MB. ${suggestion}`);
+      throw new Error(`File exceeds ${MAX_MB}MB. Try a smaller/compressed image, or paste an external image URL below.`);
     }
     const base64 = await fileToBase64(file);
-    const folder = kind === "video" ? "media/videos" : "media/images";
+    const folder = "media/images";
     const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
     const path = `${folder}/${safeName}`;
     const res = await api("/api/upload", {
@@ -232,6 +231,39 @@
     }
     const data = await res.json();
     return data.path || path;
+  }
+
+  // Videos go straight from the browser to Vercel Blob storage, bypassing the
+  // 4.5MB request-body limit that Vercel functions enforce. This supports
+  // files up to 50MB (Blob itself supports far more, but 50MB keeps things
+  // reasonable for a portfolio site).
+  let blobClientPromise = null;
+  function loadBlobClient() {
+    if (!blobClientPromise) {
+      blobClientPromise = import("https://esm.sh/@vercel/blob@2.0.0/client");
+    }
+    return blobClientPromise;
+  }
+
+  async function uploadVideoToBlob(file) {
+    const MAX_MB = 50;
+    if (file.size > MAX_MB * 1024 * 1024) {
+      throw new Error(`Video exceeds ${MAX_MB}MB. Use an external link instead (YouTube, Vimeo, Instagram or Facebook).`);
+    }
+    const tokenRes = await api("/api/blob-upload-token", { method: "POST" });
+    if (!tokenRes.ok) {
+      throw new Error("Could not authorize the upload. Try logging out and back in.");
+    }
+    const { uploadAuth } = await tokenRes.json();
+
+    const { upload } = await loadBlobClient();
+    const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
+    const blob = await upload(`media/videos/${safeName}`, file, {
+      access: "public",
+      handleUploadUrl: API_BASE + "/api/blob-upload",
+      clientPayload: JSON.stringify({ uploadAuth })
+    });
+    return blob.url;
   }
 
   function sectionCard(title, ...children) {
