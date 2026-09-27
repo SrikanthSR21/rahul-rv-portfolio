@@ -1,7 +1,17 @@
 const config = require("./config");
 
+function siteOrigin() {
+  const raw = config.SITE_URL();
+  if (raw === "*") return "*";
+  try {
+    return new URL(raw).origin;
+  } catch (err) {
+    return raw;
+  }
+}
+
 function applyCors(req, res) {
-  const allowed = config.SITE_URL();
+  const allowed = siteOrigin();
   const origin = req.headers.origin;
   if (allowed === "*" || !origin) {
     res.setHeader("Access-Control-Allow-Origin", origin || "*");
