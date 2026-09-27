@@ -84,7 +84,18 @@
         "year": "PLACEHOLDER",
         "description": "PLACEHOLDER description of the project.",
         "credits": "PLACEHOLDER credits (director, production house, etc.)",
-        "coverImage": "media/images/PLACEHOLDER-project1-cover.jpg",
+        "coverImage": "media/images/1790514592742-IMG_0042.JPG.jpeg",
+        "images": [],
+        "videos": []
+      },
+      {
+        "id": "project-1790514611730",
+        "title": "A sample work",
+        "role": "Charater Artist",
+        "year": "2024",
+        "description": "A character artist",
+        "credits": "Director, Production House, Family and Friends",
+        "coverImage": "media/images/1790514810278-IMG_8333.PNG",
         "images": [],
         "videos": []
       }
