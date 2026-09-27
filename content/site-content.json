@@ -101,9 +101,9 @@
         "videoUrl": "https://www.youtube.com/watch?v=-eb52f2Wftw"
       },
       {
-        "title": "2nd sample video",
-        "description": "a sample checking video",
-        "thumbnail": "media/images/1790516902791-IMG_0084.JPG.jpeg",
+        "title": "2nd video",
+        "description": "a sample video 2nd checking",
+        "thumbnail": "",
         "videoUrl": "https://www.youtube.com/watch?v=7YU7Qd6A1GI&list=RD7YU7Qd6A1GI&start_radio=1"
       }
     ]
