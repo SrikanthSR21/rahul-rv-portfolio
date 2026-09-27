@@ -210,9 +210,12 @@
   }
 
   async function uploadFile(file, kind) {
-    const MAX_MB = kind === "video" ? 50 : 8;
+    const MAX_MB = kind === "video" ? 3 : 4;
     if (file.size > MAX_MB * 1024 * 1024) {
-      throw new Error(`File exceeds ${MAX_MB}MB. Use an external URL (e.g. YouTube/Vimeo) for large videos instead.`);
+      const suggestion = kind === "video"
+        ? "Use an external link instead (paste a YouTube, Vimeo, Instagram or Facebook video URL below) — direct video upload only works for very small clips."
+        : "Try a smaller/compressed image, or paste an external image URL below.";
+      throw new Error(`File exceeds ${MAX_MB}MB. ${suggestion}`);
     }
     const base64 = await fileToBase64(file);
     const folder = kind === "video" ? "media/videos" : "media/images";
@@ -341,6 +344,32 @@
           item.appendChild(field("Description", p.description, (v) => p.description = v, "textarea"));
           item.appendChild(field("Credits", p.credits, (v) => p.credits = v));
           item.appendChild(mediaField("Cover Image", p.coverImage, (v) => p.coverImage = v, "image"));
+
+          const videosWrap = document.createElement("div");
+          videosWrap.className = "field-group";
+          videosWrap.innerHTML = `<label>Videos / Short Films for this Project</label>`;
+          if (!Array.isArray(p.videos)) p.videos = [];
+          function drawProjectVideos() {
+            videosWrap.querySelectorAll(".repeatable-item-nested").forEach((el) => el.remove());
+            const addVideoBtnRef = videosWrap.querySelector(".add-video-btn");
+            p.videos.forEach((vid, vi) => {
+              const vItem = document.createElement("div");
+              vItem.className = "repeatable-item repeatable-item-nested";
+              vItem.innerHTML = `<button class="remove-btn" data-vi="${vi}">✕</button>`;
+              vItem.appendChild(field("Video Title (optional)", vid.title, (val) => vid.title = val));
+              vItem.appendChild(mediaField("Video (upload or paste YouTube/Vimeo/Instagram/Facebook URL)", vid.videoUrl, (val) => vid.videoUrl = val, "video"));
+              vItem.querySelector(".remove-btn").addEventListener("click", () => { p.videos.splice(vi, 1); drawProjectVideos(); });
+              videosWrap.insertBefore(vItem, addVideoBtnRef);
+            });
+          }
+          const addVideoBtn = document.createElement("button");
+          addVideoBtn.className = "btn btn-outline btn-sm add-item-btn add-video-btn";
+          addVideoBtn.textContent = "+ Add Video";
+          addVideoBtn.addEventListener("click", () => { p.videos.push({ title: "", videoUrl: "" }); drawProjectVideos(); });
+          videosWrap.appendChild(addVideoBtn);
+          drawProjectVideos();
+          item.appendChild(videosWrap);
+
           item.querySelector(".remove-btn").addEventListener("click", () => { d.projects.splice(i, 1); draw(); });
           list.appendChild(item);
         });
