@@ -9,10 +9,10 @@
     "home",
     "about",
     "journey",
-    "portfolio",
     "videos",
-    "currentProject",
     "skills",
+    "currentProject",
+    "portfolio",
     "contact"
   ],
   "sectionVisibility": {
