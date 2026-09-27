@@ -105,6 +105,12 @@
         "description": "a sample video 2nd checking",
         "thumbnail": "",
         "videoUrl": "https://www.youtube.com/watch?v=7YU7Qd6A1GI&list=RD7YU7Qd6A1GI&start_radio=1"
+      },
+      {
+        "title": "3rd video",
+        "description": "3rd video for checking",
+        "thumbnail": "media/images/1790517090170-IMG_0226.JPG.jpeg",
+        "videoUrl": "https://www.youtube.com/watch?v=gLuESPBgw2I&list=RDgLuESPBgw2I&start_radio=1"
       }
     ]
   },
