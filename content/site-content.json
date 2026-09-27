@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "siteTitle": "Rahul V R | Actor, Content Creator, Performer",
+    "seoDescription": "Official portfolio of Rahul V R — actor, content creator and performer from Trivandrum, Kerala. Currently working on the Telugu feature film LIFE.",
+    "seoKeywords": "Rahul V R, actor Kerala, Trivandrum actor, Telugu film LIFE, content creator, reels artist",
+    "favicon": "media/images/favicon.png"
+  },
+  "sectionOrder": ["home", "about", "journey", "portfolio", "videos", "currentProject", "skills", "contact"],
+  "sectionVisibility": {
+    "home": true,
+    "about": true,
+    "journey": true,
+    "portfolio": true,
+    "videos": true,
+    "currentProject": true,
+    "skills": true,
+    "contact": true
+  },
+  "home": {
+    "name": "Rahul V R",
+    "headline": "Actor | Content Creator | Performer",
+    "tagline": "Bringing stories to life, one frame at a time.",
+    "portraitImage": "media/images/PLACEHOLDER-portrait.jpg",
+    "showreelVideo": "",
+    "showreelThumbnail": "media/images/PLACEHOLDER-showreel-thumb.jpg",
+    "ctaWatchText": "Watch Showreel",
+    "ctaContactText": "Contact for Projects"
+  },
+  "about": {
+    "heading": "About Rahul",
+    "age": 26,
+    "location": "Trivandrum, Kerala",
+    "education": "B.Tech Graduate",
+    "languages": ["Malayalam", "English", "Tamil"],
+    "bio": "Rahul V R comes from a background in app development and sales, but acting has always been his true passion. What began as a creative outlet during the Covid lockdown — making short videos on TikTok — steadily grew into a dedicated pursuit of performance. He carried that momentum onto Instagram Reels, building an audience through consistent, expressive content, and has since turned that experience into a growing career in acting.",
+    "profileImage": "media/images/PLACEHOLDER-about.jpg"
+  },
+  "journey": {
+    "heading": "The Journey",
+    "milestones": [
+      {
+        "year": "PLACEHOLDER-YEAR",
+        "title": "A Background in Tech and Sales",
+        "description": "Before stepping into performance, Rahul built a foundation in app development and sales — experience that sharpened his discipline and communication skills."
+      },
+      {
+        "year": "PLACEHOLDER-YEAR (Covid lockdown)",
+        "title": "First Steps on TikTok",
+        "description": "During the Covid lockdown, Rahul began creating short videos on TikTok, discovering a genuine passion for performing in front of the camera."
+      },
+      {
+        "year": "PLACEHOLDER-YEAR",
+        "title": "Growing on Instagram Reels",
+        "description": "He continued honing his craft through reels on Instagram, gradually developing his voice as a performer and content creator."
+      },
+      {
+        "year": "PLACEHOLDER-YEAR",
+        "title": "Turning Passion into a Career",
+        "description": "What started as content creation evolved into a professional pursuit of acting, opening the door to on-screen opportunities."
+      }
+    ]
+  },
+  "portfolio": {
+    "heading": "Acting Portfolio",
+    "subheading": "A growing collection of projects and performances.",
+    "projects": [
+      {
+        "id": "project-placeholder-1",
+        "title": "PLACEHOLDER Project Title",
+        "role": "PLACEHOLDER Role",
+        "year": "PLACEHOLDER",
+        "description": "PLACEHOLDER description of the project.",
+        "credits": "PLACEHOLDER credits (director, production house, etc.)",
+        "coverImage": "media/images/PLACEHOLDER-project1-cover.jpg",
+        "images": [],
+        "videos": []
+      }
+    ]
+  },
+  "videos": {
+    "heading": "Videos & Reels",
+    "subheading": "Selected reels and video work.",
+    "items": []
+  },
+  "currentProject": {
+    "heading": "Current Project",
+    "status": "Upcoming",
+    "title": "LIFE",
+    "language": "Telugu",
+    "type": "Feature Film",
+    "description": "Rahul is currently working on LIFE, an upcoming Telugu feature film. Further details about the project will be shared closer to release.",
+    "posterImage": "media/images/PLACEHOLDER-life-poster.jpg",
+    "teaserVideo": ""
+  },
+  "skills": {
+    "heading": "Skills",
+    "items": [
+      "Acting",
+      "Lip-sync Performance",
+      "Dialogue Delivery",
+      "Content Creation",
+      "Dancing",
+      "Communication"
+    ],
+    "openTo": [
+      "Feature Films",
+      "Web Series",
+      "Short Films",
+      "Music Videos",
+      "OTT Projects",
+      "Advertisements"
+    ]
+  },
+  "contact": {
+    "heading": "Get in Touch",
+    "subheading": "Open for feature films, web series, short films, music videos, OTT projects and advertisements.",
+    "phone": "+91 90720 99361",
+    "whatsapp": "https://wa.me/919072099361",
+    "email": "acharyar440@gmail.com",
+    "instagram": "https://www.instagram.com/thangu____"
+  }
+}
