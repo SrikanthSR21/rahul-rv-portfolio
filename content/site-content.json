@@ -5,7 +5,16 @@
     "seoKeywords": "Rahul V R, actor Kerala, Trivandrum actor, Telugu film LIFE, content creator, reels artist",
     "favicon": "media/images/favicon.png"
   },
-  "sectionOrder": ["home", "about", "journey", "portfolio", "videos", "currentProject", "skills", "contact"],
+  "sectionOrder": [
+    "home",
+    "about",
+    "journey",
+    "portfolio",
+    "videos",
+    "currentProject",
+    "skills",
+    "contact"
+  ],
   "sectionVisibility": {
     "home": true,
     "about": true,
@@ -20,7 +29,7 @@
     "name": "Rahul V R",
     "headline": "Actor | Content Creator | Performer",
     "tagline": "Bringing stories to life, one frame at a time.",
-    "portraitImage": "media/images/PLACEHOLDER-portrait.jpg",
+    "portraitImage": "media/images/1790513173848-IMG_0083.JPG.jpeg",
     "showreelVideo": "",
     "showreelThumbnail": "media/images/PLACEHOLDER-showreel-thumb.jpg",
     "ctaWatchText": "Watch Showreel",
@@ -31,7 +40,11 @@
     "age": 26,
     "location": "Trivandrum, Kerala",
     "education": "B.Tech Graduate",
-    "languages": ["Malayalam", "English", "Tamil"],
+    "languages": [
+      "Malayalam",
+      "English",
+      "Tamil"
+    ],
     "bio": "Rahul V R comes from a background in app development and sales, but acting has always been his true passion. What began as a creative outlet during the Covid lockdown — making short videos on TikTok — steadily grew into a dedicated pursuit of performance. He carried that momentum onto Instagram Reels, building an audience through consistent, expressive content, and has since turned that experience into a growing career in acting.",
     "profileImage": "media/images/PLACEHOLDER-about.jpg"
   },
@@ -100,7 +113,8 @@
       "Dialogue Delivery",
       "Content Creation",
       "Dancing",
-      "Communication"
+      "Communication",
+      "Easily adaptable"
     ],
     "openTo": [
       "Feature Films",
