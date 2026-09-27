@@ -51,20 +51,24 @@
     return /youtube\.com|youtu\.be|vimeo\.com/i.test(url || "");
   }
   function embedUrl(url) {
-    if (/youtu\.be\//.test(url)) {
-      const id = url.split("youtu.be/")[1].split(/[?&]/)[0];
-      return `https://www.youtube.com/embed/${id}`;
-    }
-    if (/youtube\.com\/watch/.test(url)) {
-      const id = new URL(url).searchParams.get("v");
-      return `https://www.youtube.com/embed/${id}`;
-    }
-    if (/vimeo\.com\//.test(url)) {
-      const id = url.split("vimeo.com/")[1].split(/[?&]/)[0];
-      return `https://player.vimeo.com/video/${id}`;
-    }
-    return url;
+  if (/youtu\.be\//.test(url)) {
+    const id = url.split("youtu.be/")[1].split(/[?&]/)[0];
+    return `https://www.youtube.com/embed/${id}`;
   }
+  if (/youtube\.com\/watch/.test(url)) {
+    const id = new URL(url).searchParams.get("v");
+    return `https://www.youtube.com/embed/${id}`;
+  }
+  if (/youtube\.com\/shorts\//.test(url)) {
+    const id = url.split("youtube.com/shorts/")[1].split(/[?&]/)[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+  if (/vimeo\.com\//.test(url)) {
+    const id = url.split("vimeo.com/")[1].split(/[?&]/)[0];
+    return `https://player.vimeo.com/video/${id}`;
+  }
+  return url;
+}
 
   function lazyImg(src, alt, cls) {
     return `<img data-lazy="${esc(src)}" alt="${esc(alt || "")}" class="skeleton ${cls || ""}" loading="lazy">`;
