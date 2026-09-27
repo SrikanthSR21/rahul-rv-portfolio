@@ -84,7 +84,7 @@
         "year": "PLACEHOLDER",
         "description": "PLACEHOLDER description of the project.",
         "credits": "PLACEHOLDER credits (director, production house, etc.)",
-        "coverImage": "media/images/PLACEHOLDER-project1-cover.jpg",
+        "coverImage": "media/images/1790513766399-IMG_0086.JPG.jpeg",
         "images": [],
         "videos": []
       }
@@ -93,7 +93,14 @@
   "videos": {
     "heading": "Videos & Reels",
     "subheading": "Selected reels and video work.",
-    "items": []
+    "items": [
+      {
+        "title": "A sample video",
+        "description": "A sample video",
+        "thumbnail": "media/images/1790513917620-IMG_0084.JPG.jpeg",
+        "videoUrl": "https://www.youtube.com/shorts/o32RSkfOrBw"
+      }
+    ]
   },
   "currentProject": {
     "heading": "Current Project",
@@ -102,7 +109,7 @@
     "language": "Telugu",
     "type": "Feature Film",
     "description": "Rahul is currently working on LIFE, an upcoming Telugu feature film. Further details about the project will be shared closer to release.",
-    "posterImage": "media/images/1790513673072-IMG_0184.JPG.jpeg",
+    "posterImage": "media/images/PLACEHOLDER-life-poster.jpg",
     "teaserVideo": ""
   },
   "skills": {
