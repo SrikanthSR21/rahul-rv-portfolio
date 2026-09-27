@@ -84,18 +84,7 @@
         "year": "PLACEHOLDER",
         "description": "PLACEHOLDER description of the project.",
         "credits": "PLACEHOLDER credits (director, production house, etc.)",
-        "coverImage": "media/images/1790514592742-IMG_0042.JPG.jpeg",
-        "images": [],
-        "videos": []
-      },
-      {
-        "id": "project-1790514611730",
-        "title": "A sample work",
-        "role": "Charater Artist",
-        "year": "2024",
-        "description": "A character artist",
-        "credits": "Director, Production House, Family and Friends",
-        "coverImage": "media/images/1790514810278-IMG_8333.PNG",
+        "coverImage": "media/images/PLACEHOLDER-project1-cover.jpg",
         "images": [],
         "videos": []
       }
@@ -104,7 +93,14 @@
   "videos": {
     "heading": "Videos & Reels",
     "subheading": "Selected reels and video work.",
-    "items": []
+    "items": [
+      {
+        "title": "",
+        "description": "",
+        "thumbnail": "",
+        "videoUrl": ""
+      }
+    ]
   },
   "currentProject": {
     "heading": "Current Project",
@@ -113,7 +109,7 @@
     "language": "Telugu",
     "type": "Feature Film",
     "description": "Rahul is currently working on LIFE, an upcoming Telugu feature film. Further details about the project will be shared closer to release.",
-    "posterImage": "media/images/1790513673072-IMG_0184.JPG.jpeg",
+    "posterImage": "https://www.youtube.com/shorts/njP23L91Jjg",
     "teaserVideo": "https://www.youtube.com/shorts/njP23L91Jjg"
   },
   "skills": {
