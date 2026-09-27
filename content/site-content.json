@@ -99,6 +99,12 @@
         "description": "A sample video - unrelated video for checking purpose",
         "thumbnail": "media/images/1790515235112-IMG_0086.JPG.jpeg",
         "videoUrl": "https://www.youtube.com/watch?v=-eb52f2Wftw"
+      },
+      {
+        "title": "2nd sample video",
+        "description": "a sample checking video",
+        "thumbnail": "media/images/1790516902791-IMG_0084.JPG.jpeg",
+        "videoUrl": "https://www.youtube.com/watch?v=7YU7Qd6A1GI&list=RD7YU7Qd6A1GI&start_radio=1"
       }
     ]
   },
