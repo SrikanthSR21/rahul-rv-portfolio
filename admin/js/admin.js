@@ -14,7 +14,8 @@
 
   const SECTION_LABELS = {
     home: "Home", about: "About", journey: "Journey", portfolio: "Portfolio",
-    videos: "Videos", currentProject: "Current Project", skills: "Skills", contact: "Contact"
+    videos: "Videos", shortFilm: "Short Films", gallery: "Gallery",
+    currentProject: "Current Projects", skills: "Skills", contact: "Contact"
   };
 
   let draft = null;        // working copy of content
@@ -428,6 +429,66 @@
       addBtn.className = "btn btn-outline btn-sm add-item-btn";
       addBtn.textContent = "+ Add Video";
       addBtn.addEventListener("click", () => { d.items.push({ title: "", description: "", thumbnail: "", videoUrl: "" }); draw(); });
+      c.appendChild(list); c.appendChild(addBtn);
+      return [c];
+    },
+    shortFilm(d) {
+      const c = sectionCard("Short Films");
+      c.appendChild(field("Heading", d.heading, (v) => d.heading = v));
+      c.appendChild(field("Subheading", d.subheading, (v) => d.subheading = v));
+      const list = document.createElement("div");
+      function draw() {
+        list.innerHTML = "";
+        d.items.forEach((p, i) => {
+          const item = document.createElement("div");
+          item.className = "repeatable-item";
+          item.innerHTML = `<button class="remove-btn" data-i="${i}">✕</button>`;
+          item.appendChild(field("Title", p.title, (v) => p.title = v));
+          const row = document.createElement("div"); row.className = "field-row";
+          row.appendChild(field("Role (e.g. Lead, Supporting)", p.role, (v) => p.role = v));
+          row.appendChild(field("Year", p.year, (v) => p.year = v));
+          item.appendChild(row);
+          item.appendChild(field("Description", p.description, (v) => p.description = v, "textarea"));
+          item.appendChild(galleryField("Photos", p.photos || (p.photos = []), (v) => p.photos = v));
+          item.appendChild(field("YouTube / Vimeo Link", p.videoLink, (v) => p.videoLink = v, "url"));
+          item.querySelector(".remove-btn").addEventListener("click", () => { d.items.splice(i, 1); draw(); });
+          list.appendChild(item);
+        });
+      }
+      draw();
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn btn-outline btn-sm add-item-btn";
+      addBtn.textContent = "+ Add Short Film";
+      addBtn.addEventListener("click", () => {
+        d.items.push({ title: "", role: "", year: "", description: "", photos: [], videoLink: "" });
+        draw();
+      });
+      c.appendChild(list); c.appendChild(addBtn);
+      return [c];
+    },
+    gallery(d) {
+      const c = sectionCard("Gallery");
+      c.appendChild(field("Heading", d.heading, (v) => d.heading = v));
+      c.appendChild(field("Subheading", d.subheading, (v) => d.subheading = v));
+      const list = document.createElement("div");
+      function draw() {
+        list.innerHTML = "";
+        d.items.forEach((g, i) => {
+          const item = document.createElement("div");
+          item.className = "repeatable-item";
+          item.innerHTML = `<button class="remove-btn" data-i="${i}">✕</button>`;
+          item.appendChild(mediaField("Image", g.image, (v) => g.image = v, "image"));
+          item.appendChild(field("Title (optional)", g.title, (v) => g.title = v));
+          item.appendChild(field("Caption (optional)", g.description, (v) => g.description = v, "textarea"));
+          item.querySelector(".remove-btn").addEventListener("click", () => { d.items.splice(i, 1); draw(); });
+          list.appendChild(item);
+        });
+      }
+      draw();
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn btn-outline btn-sm add-item-btn";
+      addBtn.textContent = "+ Add Photo";
+      addBtn.addEventListener("click", () => { d.items.push({ image: "", title: "", description: "" }); draw(); });
       c.appendChild(list); c.appendChild(addBtn);
       return [c];
     },

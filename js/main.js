@@ -321,9 +321,71 @@
     </section>`;
   }
 
+  function renderShortFilm(d) {
+    const cards = (d.items || []).map((p) => {
+      const photos = (p.photos || []).map((src) => `
+        <div class="gallery-thumb lazy-fade" data-lightbox-img="${esc(src)}">${lazyImg(src, p.title)}</div>
+      `).join("");
+      const photosBlock = photos
+        ? `<div class="project-subsection"><h4>Photos</h4><div class="gallery-grid">${photos}</div></div>`
+        : "";
+      const videoBlock = p.videoLink
+        ? `<div class="project-subsection"><h4>Video</h4>
+             <div class="project-video-embed">
+               <div class="embed-wrap"><iframe src="${esc(embedUrl(p.videoLink))}" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe></div>
+             </div>
+           </div>`
+        : "";
+      return `
+      <div class="project-feature lazy-fade" style="grid-template-columns:1fr;padding:32px">
+        <div>
+          <h2>${esc(p.title)}</h2>
+          <div class="card-meta">${esc(p.role || "")}${p.year ? " · " + esc(p.year) : ""}</div>
+          <p>${esc(p.description)}</p>
+          ${photosBlock}
+          ${videoBlock}
+        </div>
+      </div>`;
+    }).join("");
+    return `
+    <section id="shortFilm">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Short Films</div>
+          <h2>${esc(d.heading)}</h2>
+          <p>${esc(d.subheading || "")}</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px">${cards || emptyState("Short films coming soon.")}</div>
+      </div>
+    </section>`;
+  }
+
+  function renderGallery(d) {
+    const items = (d.items || []).map((g) => `
+      <div class="card lazy-fade" data-lightbox-img="${esc(g.image)}" style="cursor:pointer">
+        <div class="card-media">${lazyImg(g.image, g.title)}</div>
+        ${(g.title || g.description) ? `
+        <div class="card-body">
+          ${g.title ? `<h3>${esc(g.title)}</h3>` : ""}
+          ${g.description ? `<p>${esc(g.description)}</p>` : ""}
+        </div>` : ""}
+      </div>`).join("");
+    return `
+    <section id="gallery">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Gallery</div>
+          <h2>${esc(d.heading)}</h2>
+          <p>${esc(d.subheading || "")}</p>
+        </div>
+        <div class="card-grid">${items || emptyState("Gallery coming soon.")}</div>
+      </div>
+    </section>`;
+  }
+
   const RENDERERS = {
     home: renderHome, about: renderAbout, journey: renderJourney,
-    portfolio: renderPortfolio, videos: renderVideos,
+    portfolio: renderPortfolio, videos: renderVideos, shortFilm: renderShortFilm, gallery: renderGallery,
     currentProject: renderCurrentProject, skills: renderSkills, contact: renderContact
   };
 
