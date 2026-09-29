@@ -138,14 +138,22 @@
     ]
   },
   "currentProject": {
-    "heading": "Current Project",
-    "status": "Upcoming",
-    "title": "LIFE",
-    "language": "Telugu",
-    "type": "Feature Film",
-    "description": "Rahul is currently working on LIFE, an upcoming Telugu feature film. Further details about the project will be shared closer to release.",
-    "posterImage": "media/images/1790517616122-IMG_0184.JPG.jpeg",
-    "teaserVideo": "https://www.youtube.com/watch?v=q_llhP8AIjc&list=RDq_llhP8AIjc&start_radio=1"
+    "heading": "Current Projects",
+    "subheading": "What Rahul is working on right now.",
+    "items": [
+      {
+        "id": "project-1",
+        "title": "LIFE",
+        "status": "Upcoming",
+        "language": "Telugu",
+        "type": "Feature Film",
+        "description": "Rahul is currently working on LIFE, an upcoming Telugu feature film. Further details about the project will be shared closer to release.",
+        "photos": [
+          "media/images/1790517616122-IMG_0184.JPG.jpeg"
+        ],
+        "youtubeLink": "https://www.youtube.com/watch?v=q_llhP8AIjc&list=RDq_llhP8AIjc&start_radio=1"
+      }
+    ]
   },
   "skills": {
     "heading": "Skills",

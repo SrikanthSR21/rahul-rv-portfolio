@@ -93,6 +93,14 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",sans-se
 .list-editor li input{flex:1}
 .list-editor li button{background:none;border:0;color:var(--danger);cursor:pointer}
 
+.gallery-editor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;margin-bottom:10px}
+.gallery-editor-item{position:relative;aspect-ratio:1/1;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.gallery-editor-item img{width:100%;height:100%;object-fit:cover}
+.gallery-editor-item button{
+  position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border:0;
+  border-radius:50%;width:20px;height:20px;font-size:.7rem;cursor:pointer;line-height:1;
+}
+
 .preview-modal{position:fixed;inset:0;background:#000;z-index:50;display:flex;flex-direction:column}
 .preview-modal-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
 #previewFrame{flex:1;border:0;width:100%;background:#fff}

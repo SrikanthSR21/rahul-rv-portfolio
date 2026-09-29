@@ -170,7 +170,7 @@
     const id = "u_" + Math.random().toString(36).slice(2);
     wrap.innerHTML = `
       <label>${label}</label>
-      ${value ? `<img class="media-preview" src="${/^https?:\/\//.test(value) ? value : "../" + value}" onerror="this.style.display='none'">` : ""}
+      ${value ? `<img class="media-preview" src="../${value}" onerror="this.style.display='none'">` : ""}
       <div class="media-uploader" id="${id}">Click to upload ${kind === "video" ? "video" : "image"} (or paste an external URL below)</div>
       <input type="file" accept="${kind === "video" ? "video/*" : "image/*"}" style="display:none" id="${id}_file">
       <div class="upload-progress" id="${id}_status"></div>
@@ -210,14 +210,12 @@
   }
 
   async function uploadFile(file, kind) {
-    if (kind === "video") return uploadVideoToBlob(file);
-
-    const MAX_MB = 4;
+    const MAX_MB = kind === "video" ? 50 : 8;
     if (file.size > MAX_MB * 1024 * 1024) {
-      throw new Error(`File exceeds ${MAX_MB}MB. Try a smaller/compressed image, or paste an external image URL below.`);
+      throw new Error(`File exceeds ${MAX_MB}MB. Use an external URL (e.g. YouTube/Vimeo) for large videos instead.`);
     }
     const base64 = await fileToBase64(file);
-    const folder = "media/images";
+    const folder = kind === "video" ? "media/videos" : "media/images";
     const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
     const path = `${folder}/${safeName}`;
     const res = await api("/api/upload", {
@@ -233,37 +231,52 @@
     return data.path || path;
   }
 
-  // Videos go straight from the browser to Vercel Blob storage, bypassing the
-  // 4.5MB request-body limit that Vercel functions enforce. This supports
-  // files up to 50MB (Blob itself supports far more, but 50MB keeps things
-  // reasonable for a portfolio site).
-  let blobClientPromise = null;
-  function loadBlobClient() {
-    if (!blobClientPromise) {
-      blobClientPromise = import("https://esm.sh/@vercel/blob@2.0.0/client");
-    }
-    return blobClientPromise;
-  }
+  function galleryField(label, photos, onChange) {
+    const wrap = document.createElement("div");
+    wrap.className = "field-group";
+    const id = "g_" + Math.random().toString(36).slice(2);
+    wrap.innerHTML = `<label>${label}</label>
+      <div class="gallery-editor-grid" id="${id}_grid"></div>
+      <div class="media-uploader" id="${id}_add">+ Add Photo</div>
+      <input type="file" accept="image/*" style="display:none" id="${id}_file">
+      <div class="upload-progress" id="${id}_status"></div>`;
+    const grid = wrap.querySelector(`#${id}_grid`);
+    const addBtn = wrap.querySelector(`#${id}_add`);
+    const fileInput = wrap.querySelector(`#${id}_file`);
+    const statusEl = wrap.querySelector(`#${id}_status`);
 
-  async function uploadVideoToBlob(file) {
-    const MAX_MB = 50;
-    if (file.size > MAX_MB * 1024 * 1024) {
-      throw new Error(`Video exceeds ${MAX_MB}MB. Use an external link instead (YouTube, Vimeo, Instagram or Facebook).`);
+    function draw() {
+      grid.innerHTML = "";
+      photos.forEach((src, i) => {
+        const item = document.createElement("div");
+        item.className = "gallery-editor-item";
+        item.innerHTML = `<img src="../${src}"><button data-i="${i}">✕</button>`;
+        item.querySelector("button").addEventListener("click", () => {
+          photos.splice(i, 1);
+          onChange(photos);
+          draw();
+        });
+        grid.appendChild(item);
+      });
     }
-    const tokenRes = await api("/api/blob-upload-token", { method: "POST" });
-    if (!tokenRes.ok) {
-      throw new Error("Could not authorize the upload. Try logging out and back in.");
-    }
-    const { uploadAuth } = await tokenRes.json();
+    draw();
 
-    const { upload } = await loadBlobClient();
-    const safeName = Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9.\-_]/g, "");
-    const blob = await upload(`media/videos/${safeName}`, file, {
-      access: "public",
-      handleUploadUrl: API_BASE + "/api/blob-upload",
-      clientPayload: JSON.stringify({ uploadAuth })
+    addBtn.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      statusEl.textContent = "Uploading…";
+      try {
+        const path = await uploadFile(file, "image");
+        photos.push(path);
+        onChange(photos);
+        statusEl.textContent = "Uploaded ✓";
+        draw();
+      } catch (err) {
+        statusEl.textContent = "Upload failed: " + err.message;
+      }
     });
-    return blob.url;
+    return wrap;
   }
 
   function sectionCard(title, ...children) {
@@ -376,32 +389,6 @@
           item.appendChild(field("Description", p.description, (v) => p.description = v, "textarea"));
           item.appendChild(field("Credits", p.credits, (v) => p.credits = v));
           item.appendChild(mediaField("Cover Image", p.coverImage, (v) => p.coverImage = v, "image"));
-
-          const videosWrap = document.createElement("div");
-          videosWrap.className = "field-group";
-          videosWrap.innerHTML = `<label>Videos / Short Films for this Project</label>`;
-          if (!Array.isArray(p.videos)) p.videos = [];
-          function drawProjectVideos() {
-            videosWrap.querySelectorAll(".repeatable-item-nested").forEach((el) => el.remove());
-            const addVideoBtnRef = videosWrap.querySelector(".add-video-btn");
-            p.videos.forEach((vid, vi) => {
-              const vItem = document.createElement("div");
-              vItem.className = "repeatable-item repeatable-item-nested";
-              vItem.innerHTML = `<button class="remove-btn" data-vi="${vi}">✕</button>`;
-              vItem.appendChild(field("Video Title (optional)", vid.title, (val) => vid.title = val));
-              vItem.appendChild(mediaField("Video (upload or paste YouTube/Vimeo/Instagram/Facebook URL)", vid.videoUrl, (val) => vid.videoUrl = val, "video"));
-              vItem.querySelector(".remove-btn").addEventListener("click", () => { p.videos.splice(vi, 1); drawProjectVideos(); });
-              videosWrap.insertBefore(vItem, addVideoBtnRef);
-            });
-          }
-          const addVideoBtn = document.createElement("button");
-          addVideoBtn.className = "btn btn-outline btn-sm add-item-btn add-video-btn";
-          addVideoBtn.textContent = "+ Add Video";
-          addVideoBtn.addEventListener("click", () => { p.videos.push({ title: "", videoUrl: "" }); drawProjectVideos(); });
-          videosWrap.appendChild(addVideoBtn);
-          drawProjectVideos();
-          item.appendChild(videosWrap);
-
           item.querySelector(".remove-btn").addEventListener("click", () => { d.projects.splice(i, 1); draw(); });
           list.appendChild(item);
         });
@@ -445,17 +432,38 @@
       return [c];
     },
     currentProject(d) {
-      const c = sectionCard("Current Project");
+      const c = sectionCard("Current Projects");
       c.appendChild(field("Heading", d.heading, (v) => d.heading = v));
-      c.appendChild(field("Status (e.g. Upcoming)", d.status, (v) => d.status = v));
-      c.appendChild(field("Title", d.title, (v) => d.title = v));
-      const row = document.createElement("div"); row.className = "field-row";
-      row.appendChild(field("Language", d.language, (v) => d.language = v));
-      row.appendChild(field("Type", d.type, (v) => d.type = v));
-      c.appendChild(row);
-      c.appendChild(field("Description", d.description, (v) => d.description = v, "textarea"));
-      c.appendChild(mediaField("Poster Image", d.posterImage, (v) => d.posterImage = v, "image"));
-      c.appendChild(mediaField("Teaser Video", d.teaserVideo, (v) => d.teaserVideo = v, "video"));
+      c.appendChild(field("Subheading", d.subheading, (v) => d.subheading = v));
+      const list = document.createElement("div");
+      function draw() {
+        list.innerHTML = "";
+        d.items.forEach((p, i) => {
+          const item = document.createElement("div");
+          item.className = "repeatable-item";
+          item.innerHTML = `<button class="remove-btn" data-i="${i}">✕</button>`;
+          item.appendChild(field("Title", p.title, (v) => p.title = v));
+          const row = document.createElement("div"); row.className = "field-row";
+          row.appendChild(field("Status (e.g. Upcoming)", p.status, (v) => p.status = v));
+          row.appendChild(field("Language", p.language, (v) => p.language = v));
+          item.appendChild(row);
+          item.appendChild(field("Type (e.g. Feature Film)", p.type, (v) => p.type = v));
+          item.appendChild(field("Description", p.description, (v) => p.description = v, "textarea"));
+          item.appendChild(galleryField("Photos", p.photos || (p.photos = []), (v) => p.photos = v));
+          item.appendChild(field("YouTube / Vimeo Link", p.youtubeLink, (v) => p.youtubeLink = v, "url"));
+          item.querySelector(".remove-btn").addEventListener("click", () => { d.items.splice(i, 1); draw(); });
+          list.appendChild(item);
+        });
+      }
+      draw();
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn btn-outline btn-sm add-item-btn";
+      addBtn.textContent = "+ Add Project";
+      addBtn.addEventListener("click", () => {
+        d.items.push({ id: "project-" + Date.now(), title: "", status: "Upcoming", language: "", type: "", description: "", photos: [], youtubeLink: "" });
+        draw();
+      });
+      c.appendChild(list); c.appendChild(addBtn);
       return [c];
     },
     skills(d) {

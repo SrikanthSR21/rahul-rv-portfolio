@@ -4,7 +4,7 @@ function siteOrigin() {
   const raw = config.SITE_URL();
   if (raw === "*") return "*";
   try {
-    return new URL(raw).origin;
+    return new URL(raw).origin; // strips any path, e.g. "/rahul-rv-portfolio"
   } catch (err) {
     return raw;
   }

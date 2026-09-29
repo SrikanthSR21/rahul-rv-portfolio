@@ -48,7 +48,7 @@
     return /\.(mp4|webm|mov)$/i.test(url || "");
   }
   function isEmbeddable(url) {
-    return /youtube\.com|youtu\.be|vimeo\.com|instagram\.com|facebook\.com|fb\.watch/i.test(url || "");
+    return /youtube\.com|youtu\.be|vimeo\.com/i.test(url || "");
   }
   function embedUrl(url) {
     if (/youtu\.be\//.test(url)) {
@@ -59,20 +59,9 @@
       const id = new URL(url).searchParams.get("v");
       return `https://www.youtube.com/embed/${id}`;
     }
-    if (/youtube\.com\/shorts\//.test(url)) {
-      const id = url.split("youtube.com/shorts/")[1].split(/[?&]/)[0];
-      return `https://www.youtube.com/embed/${id}`;
-    }
     if (/vimeo\.com\//.test(url)) {
       const id = url.split("vimeo.com/")[1].split(/[?&]/)[0];
       return `https://player.vimeo.com/video/${id}`;
-    }
-    if (/instagram\.com\/(reel|p|tv)\//.test(url)) {
-      const clean = url.split(/[?#]/)[0].replace(/\/$/, "");
-      return `${clean}/embed`;
-    }
-    if (/facebook\.com\/.*\/videos\//.test(url) || /fb\.watch\//.test(url)) {
-      return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0`;
     }
     return url;
   }
@@ -182,21 +171,15 @@
   }
 
   function renderPortfolio(d) {
-    const cards = (d.projects || []).map((p, pi) => {
-      const vids = (p.videos || []).filter((v) => v && v.videoUrl);
-      const videoBadge = vids.length
-        ? `<div class="play-badge" data-project-video="${pi}"><span>&#9658;</span></div>`
-        : "";
-      return `
+    const cards = (d.projects || []).map((p) => `
       <div class="card lazy-fade">
-        <div class="card-media">${lazyImg(p.coverImage, p.title)}${videoBadge}</div>
+        <div class="card-media">${lazyImg(p.coverImage, p.title)}</div>
         <div class="card-body">
           <h3>${esc(p.title)}</h3>
           <div class="card-meta">${esc(p.role)}${p.year ? " · " + esc(p.year) : ""}</div>
           <p>${esc(p.description)}</p>
         </div>
-      </div>`;
-    }).join("");
+      </div>`).join("");
     return `
     <section id="portfolio">
       <div class="container">
@@ -240,18 +223,47 @@
   }
 
   function renderCurrentProject(d) {
+    const cards = (d.items || []).map((p, i) => {
+      const photos = (p.photos || []).map((src) => `
+        <div class="gallery-thumb lazy-fade" data-lightbox-img="${esc(src)}">${lazyImg(src, p.title)}</div>
+      `).join("");
+      const photosBlock = photos
+        ? `<div class="project-subsection">
+             <h4>Photos</h4>
+             <div class="gallery-grid">${photos}</div>
+           </div>`
+        : "";
+      const videoBlock = p.youtubeLink
+        ? `<div class="project-subsection">
+             <h4>Video</h4>
+             <div class="project-video-embed" data-video-src="${esc(p.youtubeLink)}">
+               <div class="embed-wrap">
+                 <iframe src="${esc(embedUrl(p.youtubeLink))}" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>
+               </div>
+             </div>
+           </div>`
+        : "";
+      return `
+      <div class="project-feature lazy-fade" style="grid-template-columns:1fr;padding:32px">
+        <div>
+          <span class="status-badge">${esc(p.status)}</span>
+          <h2>${esc(p.title)}</h2>
+          <div class="card-meta">${esc(p.language)}${p.type ? " · " + esc(p.type) : ""}</div>
+          <p>${esc(p.description)}</p>
+          ${photosBlock}
+          ${videoBlock}
+        </div>
+      </div>`;
+    }).join("");
     return `
     <section id="currentProject">
       <div class="container">
-        <div class="project-feature">
-          <div class="project-poster lazy-fade">${lazyImg(d.posterImage, d.title)}</div>
-          <div>
-            <span class="status-badge">${esc(d.status)}</span>
-            <h2>${esc(d.title)}</h2>
-            <div class="card-meta">${esc(d.language)} · ${esc(d.type)}</div>
-            <p>${esc(d.description)}</p>
-          </div>
+        <div class="section-head">
+          <div class="eyebrow">Current Projects</div>
+          <h2>${esc(d.heading)}</h2>
+          <p>${esc(d.subheading || "")}</p>
         </div>
+        <div style="display:flex;flex-direction:column;gap:24px">${cards || emptyState("No current projects yet.")}</div>
       </div>
     </section>`;
   }
@@ -355,16 +367,11 @@
       });
     });
 
-    // Portfolio project video badge clicks
-    $app.querySelectorAll("[data-project-video]").forEach((badge) => {
-      badge.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const pi = Number(badge.dataset.projectVideo);
-        const project = (content.portfolio.projects || [])[pi];
-        const vids = project ? (project.videos || []).filter((v) => v && v.videoUrl) : [];
-        if (!vids.length) return;
-        const src = vids[0].videoUrl;
-        isEmbeddable(src) ? openEmbed(src) : openLightboxVideo(src);
+    // Current-project gallery photo clicks
+    $app.querySelectorAll("[data-lightbox-img]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const img = el.querySelector("img");
+        openLightboxImage(el.dataset.lightboxImg, img ? img.alt : "");
       });
     });
 
