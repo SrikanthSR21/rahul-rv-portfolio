@@ -222,6 +222,24 @@ section{padding:96px 0}
 .lightbox-close{
   position:absolute;top:20px;right:24px;background:none;border:0;color:#fff;font-size:2rem;cursor:pointer;
 }
+.lightbox-nav{
+  position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);color:#fff;font-size:1.2rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;
+  z-index:1001;
+}
+.lightbox-nav:hover{background:rgba(0,0,0,.7)}
+.lightbox-nav.prev{left:16px}
+.lightbox-nav.next{right:16px}
+.lightbox-caption{
+  position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#e8e6df;font-size:.9rem;
+  padding:0 60px;min-height:1.2em;
+}
+@media(max-width:640px){
+  .lightbox-nav{width:40px;height:40px;font-size:1rem}
+  .lightbox-nav.prev{left:8px}
+  .lightbox-nav.next{right:8px}
+}
 
 /* Footer */
 footer{border-top:1px solid var(--line);padding:32px 0;text-align:center;color:var(--text-dim);font-size:.85rem}
