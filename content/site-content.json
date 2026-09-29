@@ -206,7 +206,18 @@
   "gallery": {
     "heading": "Gallery",
     "subheading": "A look behind the scenes and on set.",
-    "items": []
+    "items": [
+      {
+        "image": "media/images/1790683044296-IMG_0226.JPG.jpeg",
+        "title": "",
+        "description": ""
+      },
+      {
+        "image": "media/images/1790683054340-IMG_0184.JPG.jpeg",
+        "title": "",
+        "description": ""
+      }
+    ]
   },
   "shortFilm": {
     "heading": "Short Films",
