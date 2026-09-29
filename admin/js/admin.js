@@ -169,9 +169,18 @@
     const wrap = document.createElement("div");
     wrap.className = "field-group";
     const id = "u_" + Math.random().toString(36).slice(2);
+    const isVideoFile = kind === "video" && value && !value.startsWith("http");
+    let previewHtml = "";
+    if (value && kind !== "video") {
+      previewHtml = `<img class="media-preview" src="../${value}" onerror="this.style.display='none'">`;
+    } else if (isVideoFile) {
+      previewHtml = `<video class="media-preview" src="../${value}" controls></video>`;
+    } else if (value && value.startsWith("http")) {
+      previewHtml = `<div class="muted" style="margin-bottom:8px">Linked: ${value}</div>`;
+    }
     wrap.innerHTML = `
       <label>${label}</label>
-      ${value ? `<img class="media-preview" src="../${value}" onerror="this.style.display='none'">` : ""}
+      ${previewHtml}
       <div class="media-uploader" id="${id}">Click to upload ${kind === "video" ? "video" : "image"} (or paste an external URL below)</div>
       <input type="file" accept="${kind === "video" ? "video/*" : "image/*"}" style="display:none" id="${id}_file">
       <div class="upload-progress" id="${id}_status"></div>
@@ -238,8 +247,8 @@
     const id = "g_" + Math.random().toString(36).slice(2);
     wrap.innerHTML = `<label>${label}</label>
       <div class="gallery-editor-grid" id="${id}_grid"></div>
-      <div class="media-uploader" id="${id}_add">+ Add Photo</div>
-      <input type="file" accept="image/*" style="display:none" id="${id}_file">
+      <div class="media-uploader" id="${id}_add">+ Add Photos (you can select multiple at once)</div>
+      <input type="file" accept="image/*" multiple style="display:none" id="${id}_file">
       <div class="upload-progress" id="${id}_status"></div>`;
     const grid = wrap.querySelector(`#${id}_grid`);
     const addBtn = wrap.querySelector(`#${id}_add`);
@@ -264,18 +273,22 @@
 
     addBtn.addEventListener("click", () => fileInput.click());
     fileInput.addEventListener("change", async () => {
-      const file = fileInput.files[0];
-      if (!file) return;
-      statusEl.textContent = "Uploading…";
-      try {
-        const path = await uploadFile(file, "image");
-        photos.push(path);
-        onChange(photos);
-        statusEl.textContent = "Uploaded ✓";
-        draw();
-      } catch (err) {
-        statusEl.textContent = "Upload failed: " + err.message;
+      const files = Array.from(fileInput.files || []);
+      if (!files.length) return;
+      for (let i = 0; i < files.length; i++) {
+        statusEl.textContent = `Uploading ${i + 1} of ${files.length}…`;
+        try {
+          const path = await uploadFile(files[i], "image");
+          photos.push(path);
+          onChange(photos);
+          draw();
+        } catch (err) {
+          statusEl.textContent = `Upload failed on "${files[i].name}": ${err.message}`;
+          return;
+        }
       }
+      statusEl.textContent = `Uploaded ${files.length} photo${files.length > 1 ? "s" : ""} ✓`;
+      fileInput.value = "";
     });
     return wrap;
   }
@@ -450,7 +463,7 @@
           item.appendChild(row);
           item.appendChild(field("Description", p.description, (v) => p.description = v, "textarea"));
           item.appendChild(galleryField("Photos", p.photos || (p.photos = []), (v) => p.photos = v));
-          item.appendChild(field("YouTube / Vimeo Link", p.videoLink, (v) => p.videoLink = v, "url"));
+          item.appendChild(mediaField("Video (upload a file, or paste a YouTube/Vimeo link below)", p.videoLink, (v) => p.videoLink = v, "video"));
           item.querySelector(".remove-btn").addEventListener("click", () => { d.items.splice(i, 1); draw(); });
           list.appendChild(item);
         });
@@ -511,7 +524,7 @@
           item.appendChild(field("Type (e.g. Feature Film)", p.type, (v) => p.type = v));
           item.appendChild(field("Description", p.description, (v) => p.description = v, "textarea"));
           item.appendChild(galleryField("Photos", p.photos || (p.photos = []), (v) => p.photos = v));
-          item.appendChild(field("YouTube / Vimeo Link", p.youtubeLink, (v) => p.youtubeLink = v, "url"));
+          item.appendChild(mediaField("Video (upload a file, or paste a YouTube/Vimeo link below)", p.youtubeLink, (v) => p.youtubeLink = v, "video"));
           item.querySelector(".remove-btn").addEventListener("click", () => { d.items.splice(i, 1); draw(); });
           list.appendChild(item);
         });

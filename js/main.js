@@ -66,6 +66,14 @@
     return url;
   }
 
+  function videoEmbedHtml(src) {
+    if (isEmbeddable(src)) {
+      return `<div class="embed-wrap"><iframe src="${esc(embedUrl(src))}" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe></div>`;
+    }
+    // Direct uploaded file (mp4/webm/mov)
+    return `<video src="${esc(src)}" controls playsinline style="width:100%;border-radius:8px;border:1px solid var(--line)"></video>`;
+  }
+
   function lazyImg(src, alt, cls) {
     return `<img data-lazy="${esc(src)}" alt="${esc(alt || "")}" class="skeleton ${cls || ""}" loading="lazy">`;
   }
@@ -236,11 +244,7 @@
       const videoBlock = p.youtubeLink
         ? `<div class="project-subsection">
              <h4>Video</h4>
-             <div class="project-video-embed" data-video-src="${esc(p.youtubeLink)}">
-               <div class="embed-wrap">
-                 <iframe src="${esc(embedUrl(p.youtubeLink))}" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>
-               </div>
-             </div>
+             <div class="project-video-embed">${videoEmbedHtml(p.youtubeLink)}</div>
            </div>`
         : "";
       return `
@@ -330,10 +334,9 @@
         ? `<div class="project-subsection"><h4>Photos</h4><div class="gallery-grid">${photos}</div></div>`
         : "";
       const videoBlock = p.videoLink
-        ? `<div class="project-subsection"><h4>Video</h4>
-             <div class="project-video-embed">
-               <div class="embed-wrap"><iframe src="${esc(embedUrl(p.videoLink))}" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe></div>
-             </div>
+        ? `<div class="project-subsection">
+             <h4>Video</h4>
+             <div class="project-video-embed">${videoEmbedHtml(p.videoLink)}</div>
            </div>`
         : "";
       return `
