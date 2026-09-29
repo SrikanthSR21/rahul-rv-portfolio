@@ -364,15 +364,21 @@
   }
 
   function renderGallery(d) {
-    const items = (d.items || []).map((g) => `
-      <div class="card lazy-fade" data-lightbox-img="${esc(g.image)}" style="cursor:pointer">
-        <div class="card-media">${lazyImg(g.image, g.title)}</div>
-        ${(g.title || g.description) ? `
-        <div class="card-body">
-          ${g.title ? `<h3>${esc(g.title)}</h3>` : ""}
-          ${g.description ? `<p>${esc(g.description)}</p>` : ""}
-        </div>` : ""}
-      </div>`).join("");
+    const items = d.items || [];
+    if (!items.length) {
+      return `
+      <section id="gallery">
+        <div class="container">
+          <div class="section-head">
+            <div class="eyebrow">Gallery</div>
+            <h2>${esc(d.heading)}</h2>
+            <p>${esc(d.subheading || "")}</p>
+          </div>
+          ${emptyState("Gallery coming soon.")}
+        </div>
+      </section>`;
+    }
+    const dots = items.map((_, i) => `<button class="carousel-dot" data-dot="${i}" aria-label="Go to photo ${i + 1}"></button>`).join("");
     return `
     <section id="gallery">
       <div class="container">
@@ -381,7 +387,17 @@
           <h2>${esc(d.heading)}</h2>
           <p>${esc(d.subheading || "")}</p>
         </div>
-        <div class="card-grid">${items || emptyState("Gallery coming soon.")}</div>
+        <div class="gallery-carousel" id="galleryCarousel" data-index="0">
+          <div class="gallery-carousel-row">
+            <button class="carousel-btn prev" id="galleryPrev" aria-label="Previous photo">&#10094;</button>
+            <div class="gallery-carousel-stage">
+              <img id="galleryStageImg" src="" alt="" loading="lazy">
+            </div>
+            <button class="carousel-btn next" id="galleryNext" aria-label="Next photo">&#10095;</button>
+          </div>
+          <div class="gallery-caption" id="galleryCaption"></div>
+          <div class="carousel-dots">${dots}</div>
+        </div>
       </div>
     </section>`;
   }
@@ -439,6 +455,45 @@
         openLightboxImage(el.dataset.lightboxImg, img ? img.alt : "");
       });
     });
+
+    // Gallery carousel
+    const galleryCarousel = document.getElementById("galleryCarousel");
+    if (galleryCarousel && content.gallery && content.gallery.items && content.gallery.items.length) {
+      const items = content.gallery.items;
+      const stageImg = document.getElementById("galleryStageImg");
+      const caption = document.getElementById("galleryCaption");
+      const dots = galleryCarousel.querySelectorAll(".carousel-dot");
+      let index = 0;
+
+      function show(i) {
+        index = (i + items.length) % items.length;
+        const item = items[index];
+        stageImg.src = item.image;
+        stageImg.alt = item.title || "";
+        const text = [item.title, item.description].filter(Boolean).join(" — ");
+        caption.textContent = text;
+        caption.style.display = text ? "block" : "none";
+        dots.forEach((dot, di) => dot.classList.toggle("active", di === index));
+        galleryCarousel.dataset.index = index;
+      }
+
+      document.getElementById("galleryPrev").addEventListener("click", () => show(index - 1));
+      document.getElementById("galleryNext").addEventListener("click", () => show(index + 1));
+      dots.forEach((dot) => dot.addEventListener("click", () => show(parseInt(dot.dataset.dot, 10))));
+
+      // Swipe support on mobile
+      let touchStartX = null;
+      const stage = galleryCarousel.querySelector(".gallery-carousel-stage");
+      stage.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      stage.addEventListener("touchend", (e) => {
+        if (touchStartX == null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) show(index + (dx < 0 ? 1 : -1));
+        touchStartX = null;
+      });
+
+      show(0);
+    }
 
     function openEmbed(url) {
       lightboxContent.innerHTML = `<div style="position:relative;padding-top:56.25%">
