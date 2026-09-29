@@ -152,6 +152,20 @@
           "media/images/1790517616122-IMG_0184.JPG.jpeg"
         ],
         "youtubeLink": "https://www.youtube.com/watch?v=q_llhP8AIjc&list=RDq_llhP8AIjc&start_radio=1"
+      },
+      {
+        "id": "project-1790673488591",
+        "title": "New Project - Name not yet placed",
+        "status": "Upcoming",
+        "language": "Tamil",
+        "type": "Feature Film",
+        "description": "Currently working on his first Tamil film, marking an exciting new chapter in his acting journey.",
+        "photos": [
+          "media/images/1790673845178-IMG_0084.JPG.jpeg",
+          "media/images/1790673864155-IMG_0042.JPG.jpeg",
+          "media/images/1790673880126-IMG_6637.JPG.jpeg"
+        ],
+        "youtubeLink": ""
       }
     ]
   },
